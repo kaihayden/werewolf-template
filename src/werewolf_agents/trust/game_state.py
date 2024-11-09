@@ -43,7 +43,8 @@ class GameState():
     self.current_round += 1
 
   def record_vote(self, from_player_name, voted_player_name):
-    pass
+    player_id = self.player_index(player_name)
+    self.player
 
   def record_lynch(self, player_name, player_role): # roles: "villager", "doctor", "seer", "wolf"
     pass
@@ -58,6 +59,17 @@ class GameState():
     pass
 
   def claim_saved(self, player_name, player_saved_name, round_saved):
+    pass
+
+  def player_suggests(self, player_name, player_suggested_role_name, suggested_role, certainty): 
+    """_summary_
+
+    Args:
+        player_name (str): 
+        player_accused_name (str): 
+        suggested_role ("villager", "doctor", "seer", wolf", "good"): _description_
+        certainty ("guess" or "confident"):
+    """
     pass
 
   
