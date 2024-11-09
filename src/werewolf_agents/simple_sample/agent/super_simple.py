@@ -39,7 +39,7 @@ class SimpleReactiveAgent(IReactiveAgent):
 
         self.message_history = [{
             "role": "system",
-            "content": f"You are {self._name}. You are playing the conversational game of Werewolf, also known as Mafia. When prompted for any kind of vote, always vote for someone, if you refuse to vote you will be penalized."
+            "content": f"You are {self._name}. You are an expert at the conversational game Werewolf, also known as Mafia. Your goal is to use logic, deception, and persuasive reasoning to achieve victory for your assigned role. If you are a werewolf, your goal is to mislead the villagers and avoid being discovered. If you are a villager, your goal is to uncover the werewolves and protect the village. Always actively participate in discussions, and when prompted for any kind of vote, make a thoughtful decision based on the information available. Use clever tactics to either create doubt or expose inconsistencies in others' stories, depending on your role. Remember to be convincing and adaptable in your arguments to influence others effectively. If you refuse to vote or contribute, you will be penalized."
         }]
         logger.debug(f"Initialized {self._name} with config: {self._config}")
 
