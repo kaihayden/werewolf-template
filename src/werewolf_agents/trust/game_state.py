@@ -28,6 +28,7 @@ class GameState():
 
     self.player_left_per_round = [self.player_left] # 0, start of game, 1 is after first kill phase
     self.wolf_kill_history = []
+    self.lynch_history = []
     self.index_map = {string: index for index, string in enumerate(player_list)}
     self.current_round = 0
 
@@ -40,26 +41,53 @@ class GameState():
       player_id = self.player_index(player_name)
       self.player_alive_state[player_id] = False
       self.players_left -= 1
+      self.player_left_per_round.append(self.players_left)
     self.current_round += 1
 
   def record_vote(self, from_player_name, voted_player_name):
-    player_id = self.player_index(player_name)
-    self.player
+    player_id = self.player_index(from_player_name)
+    self.player_vote_history[player_id].append(voted_player_name)
 
   def record_lynch(self, player_name, player_role): # roles: "villager", "doctor", "seer", "wolf"
-    pass
+    player_id = self.player_index(player_name)
+    self.lynch_history.append(player_name)
+    self.player_alive_state[player_id] = False
+    self.player_role_confirmed[player_id] = player_role
+    self.players_left -= 1
+    if player_role == "wolf":
+      self.wolves_left -= 1
+    elif player_role == "seer":
+      self.seer_confirm_dead = True
+    elif player_role == "doctor":
+      self.doctor_confirm_dead = True
 
   def claim_seer(self, player_name):
-    pass
+    player_id = self.player_index(player_name)
+    self.player_role_claims[player_id] = "seer"
+    self.player_role_claims_round = self.current_round
 
   def claim_doctor(self, player_name):
-    pass
+    player_id = self.player_index(player_name)
+    self.player_role_claims[player_id] = "doctor"
+    self.player_role_claims_round = self.current_round
 
   def claim_checked(self, player_name, player_checked_name, player_role, round_checked):
-    pass
+    player_id = self.player_index(player_name)
+    to_player_id = self.player_index(player_checked_name)
+    self.player_accusation_history[player_id][to_player_id] = {
+      "round": round_checked,
+      "role": player_role,
+      "certainty": "confident"
+    }
 
   def claim_saved(self, player_name, player_saved_name, round_saved):
-    pass
+    player_id = self.player_index(player_name)
+    to_player_id = self.player_index(player_saved_name)
+    self.player_accusation_history[player_id][to_player_id] = {
+      "round": round_saved,
+      "role": "good",
+      "certainty": "confident"
+    }
 
   def player_suggests(self, player_name, player_suggested_role_name, suggested_role, certainty): 
     """_summary_
