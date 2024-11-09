@@ -98,6 +98,12 @@ class GameState():
         suggested_role ("villager", "doctor", "seer", wolf", "good"): _description_
         certainty ("guess" or "confident"):
     """
-    pass
+    player_id = self.player_index(player_name)
+    to_player_id = self.player_index(player_suggested_role_name)
+    self.player_accusation_history[player_id][to_player_id] = {
+      "round": self.current_round,
+      "role": suggested_role,
+      "certainty": certainty
+    }
 
   
