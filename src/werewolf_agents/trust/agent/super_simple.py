@@ -265,111 +265,117 @@ class SimpleReactiveAgent(IReactiveAgent):
 
     def convert_game_state_to_text(self):
         # Initialize the narrative list to collect sentences
-        narrative = []
-        players = self.game_state["player_list"]
-        
-        # Describe the initial state of the game
 
         try:
-            narrative.append(f"There are {len(players)} players in the game, with 2 werewolves among them.")
-        except:
-            pass
 
-        try:
-            narrative.append(f"The players are: {', '.join(players)}.")
-        except:
-            pass
-
-        try:
-            narrative.append("At the start of the game, no players were confirmed as the doctor or seer.")
-        except:
-            pass
-        
-        # Role claims
-        for i, claim in enumerate(self.game_state["player_role_claims"]):
-            if claim:
-                try:
-                    round_claimed = self.game_state["player_role_claims_round"][i]
-                    narrative.append(f"In round {round_claimed}, {players[i]} claimed to be a {claim}.")
-                except:
-                    pass
-        
-        # Vote history
-        for i, votes in enumerate(self.game_state["player_vote_history"]):
-            player_name = players[i]
-            for round_num, vote in enumerate(votes):
-                try:
-                    narrative.append(f"In round {round_num + 1}, {player_name} voted to eliminate {vote}.")
-                except:
-                    pass
-        
-        # Actions
-        for i, actions in enumerate(self.game_state["player_action_history"]):
-            player_name = players[i]
+            narrative = []
+            players = self.game_state["player_list"]
+            
+            # Describe the initial state of the game
 
             try:
-                for round_num, action in enumerate(actions):
-                    narrative.append(f"In round {round_num + 1}, {player_name} took action involving {action}.")
+                narrative.append(f"There are {len(players)} players in the game, with 2 werewolves among them.")
             except:
                 pass
-        
-        # Player accusations
-        accusation_matrix = self.game_state["player_accusation_history"]
-        for accuser_idx, accusations in enumerate(accusation_matrix):
-            accuser_name = players[accuser_idx]
-            for accused_idx, accusation_info in enumerate(accusations):
+
+            try:
+                narrative.append(f"The players are: {', '.join(players)}.")
+            except:
+                pass
+
+            try:
+                narrative.append("At the start of the game, no players were confirmed as the doctor or seer.")
+            except:
+                pass
+            
+            # Role claims
+            for i, claim in enumerate(self.game_state["player_role_claims"]):
+                if claim:
+                    try:
+                        round_claimed = self.game_state["player_role_claims_round"][i]
+                        narrative.append(f"In round {round_claimed}, {players[i]} claimed to be a {claim}.")
+                    except:
+                        pass
+            
+            # Vote history
+            for i, votes in enumerate(self.game_state["player_vote_history"]):
+                player_name = players[i]
+                for round_num, vote in enumerate(votes):
+                    try:
+                        narrative.append(f"In round {round_num + 1}, {player_name} voted to eliminate {vote}.")
+                    except:
+                        pass
+            
+            # Actions
+            for i, actions in enumerate(self.game_state["player_action_history"]):
+                player_name = players[i]
+
                 try:
-                    if accusation_info:
-                        accused_name = players[accused_idx]
-                        round_accused = accusation_info.get("round")
-                        role = accusation_info.get("role")
-                        certainty = accusation_info.get("certainty", "confident")
-                        narrative.append(
-                            f"In round {round_accused}, {accuser_name} accused {accused_name} of being a {role} with {certainty} certainty."
-                        )
+                    for round_num, action in enumerate(actions):
+                        narrative.append(f"In round {round_num + 1}, {player_name} took action involving {action}.")
                 except:
                     pass
-        
-        # Suspicious attempts
-        for i, attempts in enumerate(self.game_state["suspicious_attempts"]):
-            player_name = players[i]
+            
+            # Player accusations
+            accusation_matrix = self.game_state["player_accusation_history"]
+            for accuser_idx, accusations in enumerate(accusation_matrix):
+                accuser_name = players[accuser_idx]
+                for accused_idx, accusation_info in enumerate(accusations):
+                    try:
+                        if accusation_info:
+                            accused_name = players[accused_idx]
+                            round_accused = accusation_info.get("round")
+                            role = accusation_info.get("role")
+                            certainty = accusation_info.get("certainty", "confident")
+                            narrative.append(
+                                f"In round {round_accused}, {accuser_name} accused {accused_name} of being a {role} with {certainty} certainty."
+                            )
+                    except:
+                        pass
+            
+            # Suspicious attempts
+            for i, attempts in enumerate(self.game_state["suspicious_attempts"]):
+                player_name = players[i]
+                try:
+                    for attempt in attempts:
+                        if attempt:
+                            narrative.append(f"{player_name} was noted to have a suspicious attempt: {attempt}.")
+                except:
+                    pass
+            
+            # Wolf kills and lynching outcomes
+            wolf_kills = self.game_state["wolf_kill_history"]
             try:
-                for attempt in attempts:
-                    if attempt:
-                        narrative.append(f"{player_name} was noted to have a suspicious attempt: {attempt}.")
+                for round_num, victim in enumerate(wolf_kills):
+                    narrative.append(f"In round {round_num + 1}, the werewolves killed {victim}.")
             except:
                 pass
-        
-        # Wolf kills and lynching outcomes
-        wolf_kills = self.game_state["wolf_kill_history"]
-        try:
-            for round_num, victim in enumerate(wolf_kills):
-                narrative.append(f"In round {round_num + 1}, the werewolves killed {victim}.")
+
+            lynches = self.game_state["lynch_history"]
+            
+            try:
+                for round_num, lynched_player in enumerate(lynches):
+                    narrative.append(f"In round {round_num + 1}, the players voted to lynch {lynched_player}.")
+            except:
+                pass
+
+            # Summarize the state of key roles (doctor, seer) based on death confirmations
+            if self.game_state["seer_confirm_dead"]:
+                narrative.append("The seer was confirmed dead.")
+            if self.game_state["doctor_confirm_dead"]:
+                narrative.append("The doctor was confirmed dead.")
+            
+            # Players left per round
+            for round_num, players_left in enumerate(self.game_state["player_left_per_round"]):
+                narrative.append(f"At the start of round {round_num}, there were {players_left} players left.")
+            
+            # Compile narrative as a single text block
+            full_narrative = "\n".join(narrative)
+            
+            return full_narrative
+
         except:
             pass
-
-        lynches = self.game_state["lynch_history"]
-        
-        try:
-            for round_num, lynched_player in enumerate(lynches):
-                narrative.append(f"In round {round_num + 1}, the players voted to lynch {lynched_player}.")
-        except:
-            pass
-
-        # Summarize the state of key roles (doctor, seer) based on death confirmations
-        if self.game_state["seer_confirm_dead"]:
-            narrative.append("The seer was confirmed dead.")
-        if self.game_state["doctor_confirm_dead"]:
-            narrative.append("The doctor was confirmed dead.")
-        
-        # Players left per round
-        for round_num, players_left in enumerate(self.game_state["player_left_per_round"]):
-            narrative.append(f"At the start of round {round_num}, there were {players_left} players left.")
-        
-        # Compile narrative as a single text block
-        full_narrative = "\n".join(narrative)
-        
-        return full_narrative
 
 # Testing the agent: Make sure to comment out this code when you want to actually run the agent in some games. 
 
