@@ -263,7 +263,7 @@ class SimpleReactiveAgent(IReactiveAgent):
         # If parsing fails, return None
         return None
 
-    def parse_game_state_to_text(self):
+    def convert_game_state_to_text(self):
         # Initialize the narrative list to collect sentences
         narrative = []
         players = self.game_state["player_list"]
