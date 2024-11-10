@@ -32,6 +32,7 @@ game_results = runner.run_against_standard_agents(
 )
 
 # Save the game results to a JSON file in game_results directory
+
 results_file = os.path.join("game_results", f"game_results_{game_results['activity_id']}.json")
 with open(results_file, 'w') as f:
     json.dump(game_results, f, indent=2)
