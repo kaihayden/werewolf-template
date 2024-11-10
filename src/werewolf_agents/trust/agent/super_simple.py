@@ -138,6 +138,25 @@ class GameState():
 
   def player_index(self, player_name):
     return self.index_map[player_name]
+
+  def init_role(self, role):
+    self.given_role = role
+
+  def record_check(self, checked_player_name, is_good):
+    if is_good:
+      self.confirmed_good.append({
+        "player": checked_player_name,
+        "rationale": f"As seer, I checked {checked_player_name} on the {self.current_round} round and he's the innocent."
+      })
+    else:
+      self.confirmed_bad.append({
+        "player": checked_player_name,
+        "rationale": f"As seer, I checked {checked_player_name} on the {self.current_round} round and he's the wolf."
+      })
+    self.my_checked_history.append({
+      "player_name": checked_player_name,
+      "is_good": is_good
+    })
   
   def record_night_phase_death(self, player_name):
     self.wolf_kill_history.append(player_name)
@@ -412,7 +431,7 @@ In addition to identifying the action, analyze the message for any signs of susp
 
         if output['action'] == "record_night_phase_death":
             self.game_state.record_night_phase_death(
-                player_name = ['player_name']
+                player_name = output['player_name']
             )
 
         elif output['action'] == "record_lynch":
@@ -470,7 +489,7 @@ In addition to identifying the action, analyze the message for any signs of susp
             if output['action'] == "player_suggests":
                 self.game_state.player_suggests(
                     player_name = sender, 
-                    player_suggested_name = output.get('player_suggested_name'), 
+                    player_suggested_role_name = output.get('player_suggested_name'), 
                     suggested_role = output.get('suggested_role'), 
                     certainty = output.get('certainty')
                 )
