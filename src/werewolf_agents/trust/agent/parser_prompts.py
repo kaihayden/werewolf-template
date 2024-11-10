@@ -73,18 +73,17 @@ Input: $user_message
 ### Expected JSON Output
 
 If the message matches one of the actions above, return it in JSON format, for example:
-- {"action": "record_vote", "from_player_name": "Player A", "voted_player_name": "Player B" }
-- {"action": "claim_seer", "player_name": "Player C" }
-- {"action": "claim_doctor", "player_name": "Player D" }
-- {"action": "claim_checked", "player_name": "Player E", "player_checked_name": "Player F", "player_role": "Villager", "round_checked": 3 }
-- {"action": "claim_saved", "player_name": "Player G", "saved_player_name": "Player H", "round_saved": 2 }
-- {"action": "player_suggests", "player_name": "Player I", "player_suggested_name": "Player J", "suggested_role": "Werewolf", "certainty": "High" }
+- {"action": "record_vote", "voted_player_name": "Player B" }
+- {"action": "claim_seer" }
+- {"action": "claim_doctor" }
+- {"action": "claim_checked", "player_checked_name": "Player F", "player_role": "Villager", "round_checked": 3 }
+- {"action": "claim_saved", "saved_player_name": "Player H", "round_saved": 2 }
+- {"action": "player_suggests", "player_suggested_name": "Player J", "suggested_role": "Werewolf", "certainty": "High" }
 
 If suspicious behavior is detected, add a "suspicious" field, for example:
 
 {
   "action": "record_vote",
-  "from_player_name": "Player A",
   "voted_player_name": "Player B",
   "suspicious": {
     "flagged": True,

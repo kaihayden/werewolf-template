@@ -16,9 +16,8 @@ class GameState():
     self.seer_confirm_dead = False
     self.first_known_wolf = False
     self.player_vote_history = [[] for p in player_list]
-    self.player_action_history = [[] for p in player_list]
+    # self.player_action_history = [[] for p in player_list]
     self.player_alive_state = [True for p in player_list]
-
 
     self.player_role_claims = [None for p in player_list]
     self.player_role_claims_round = [None for p in player_list] # round in which player claimed the role
@@ -31,6 +30,8 @@ class GameState():
     self.lynch_history = []
     self.index_map = {string: index for index, string in enumerate(player_list)}
     self.current_round = 0
+
+    self.suspicious_attempts = [[] for p in player_list]
 
   def player_index(self, player_name):
     return self.index_map[player_name]
@@ -106,4 +107,6 @@ class GameState():
       "certainty": certainty
     }
 
-  
+  def player_suspicious_action(self, player_name, message):
+    player_id = self.player_index(player_name)
+    self.player_suspicious_action[player_id] = message  
