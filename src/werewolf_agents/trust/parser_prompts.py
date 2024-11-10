@@ -93,6 +93,7 @@ If suspicious behavior is detected, add a "suspicious" field, for example:
   }
 }
 
-Please note there may be multiple actions, each one should be represented in it's own JSON, but make sure not to duplicate actions. If there is no explicit player action, you do not need to include the action field.
+Please note there may be multiple actions, each one should be represented in it's own JSON, but make sure not to duplicate actions, and there is only one suspicious dict per user. If there is no explicit player action, you do not need to include the action field.
 Return only the JSON Outputs as a list and nothing else [{
 """)
+
