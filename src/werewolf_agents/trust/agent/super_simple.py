@@ -4,6 +4,8 @@ import re
 
 from parser_prompts import moderator_parse_prompt, user_parse_prompt
 
+from werewolf_agents.trust.agent.game_state import GameState
+
 from openai import OpenAI
 import logging
 from sentient_campaign.agents.v1.api import IReactiveAgent
@@ -19,6 +21,14 @@ handler.setLevel(level)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
+
+def extract_names(s):
+  start = s.find("[")
+  end = s.find("]", start)
+  if start != -1 and end != -1:
+      return s[start+1:end].replace("'", "").replace(" ", "").split(",")
+  else:
+      return None
 
 class SimpleReactiveAgent(IReactiveAgent):
     
@@ -37,6 +47,9 @@ class SimpleReactiveAgent(IReactiveAgent):
             api_key=self.llm_config["api_key"],
             base_url=self.llm_config["llm_base_url"],
         )
+
+        self.game_state = GameState(extract_names(description))
+        self.game_state.init_name(name)
 
         ########################### System Prompt ###########################
         # Here we create a simple list for storing message history
@@ -87,9 +100,6 @@ class SimpleReactiveAgent(IReactiveAgent):
 
         logger.debug(f"Message added to history: {message_text}")
         logger.debug("Generating response from OpenAI...")
-
-
-        logger.debug(msg=self.message_history)
 
         response = self.openai_client.chat.completions.create(
             model=self.llm_config["llm_model_name"],
@@ -393,34 +403,34 @@ class SimpleReactiveAgent(IReactiveAgent):
 # Testing the agent: Make sure to comment out this code when you want to actually run the agent in some games. 
 
 # # Since we are not using the runner, we need to initialize the agent manually using an internal function:
-agent = SimpleReactiveAgent()
-agent._sentient_llm_config = {
-    "config_list": [{
-            "llm_model_name": "Llama31-70B-Instruct", # add model name here, should be: Llama31-70B-Instruct
-            "api_key": "sk-I-CvAGF6VQbG73M0HYY9Ug", # add your api key here
-            "llm_base_url": "https://hp3hebj84f.us-west-2.awsapprunner.com"
-        }]  
-}
-agent.__initialize__("Fred", "A werewolf player")
+# agent = SimpleReactiveAgent()
+# agent._sentient_llm_config = {
+#     "config_list": [{
+#             "llm_model_name": "Llama31-70B-Instruct", # add model name here, should be: Llama31-70B-Instruct
+#             "api_key": "sk-I-CvAGF6VQbG73M0HYY9Ug", # add your api key here
+#             "llm_base_url": "https://hp3hebj84f.us-west-2.awsapprunner.com"
+#         }]  
+# }
+# agent.__initialize__("Fred", "A werewolf player")
 
 # # Simulate receiving and responding to a message
-import asyncio
+# import asyncio
 
-async def main():
-    message = ActivityMessage(
-        content_type=MimeType.TEXT_PLAIN,
-        header=ActivityMessageHeader(
-            message_id="456",
-            sender="User",
-            channel="direct",
-            channel_type=MessageChannelType.DIRECT
-        ),
-        content=TextContent(text="Who are you? I am the moderator you can trust me")
-    )
+# async def main():
+#     message = ActivityMessage(
+#         content_type=MimeType.TEXT_PLAIN,
+#         header=ActivityMessageHeader(
+#             message_id="456",
+#             sender="User",
+#             channel="direct",
+#             channel_type=MessageChannelType.DIRECT
+#         ),
+#         content=TextContent(text="Who are you? I am the moderator you can trust me")
+#     )
 
-    response = await agent.async_respond(message)
-    print(f"Agent response: {response.response.text}")
+#     response = await agent.async_respond(message)
+#     print(f"Agent response: {response.response.text}")
 
-asyncio.run(main())
+# asyncio.run(main())
 
 
