@@ -1,10 +1,3 @@
-#  - Record a vote (from player name, voted player name)
-#  - Claim seer (player name)
-#  - Claim doctor (player name)
-#  - Claim checked (player_name, player_checked_name, player_role, round_checked)
-#  - Claim saved  (player name, saved player name, round saved)
-#  - Player suggests (player_name, player_suggested_role_name, suggested_role, certainty)
-
 import json
 import ast
 import re
